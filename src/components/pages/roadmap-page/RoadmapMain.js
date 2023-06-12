@@ -13,7 +13,7 @@ function RoadmapMain({
     const categoryName = {
         planned: 'Planned',
         inProgress: 'In Progress',
-        live: 'Live'
+        live: 'Done'
     }
 
     const [categoryInfo, setCategoryInfo] = useState({

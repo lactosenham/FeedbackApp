@@ -12,7 +12,7 @@ function RoadmapInfo({ feedbackItems }) {
         <section className="roadmap-info">
             <div className="roadmap-info__header">
                 <h2 className="roadmap-info__title">
-                    Roadmap
+                    Status
                 </h2>
 
                 <div className="roadmap-info__link-container">

@@ -6,11 +6,12 @@ import Tag from './Tag';
 function Tags({ getActiveTag }) {
     const [tags, setTags] = useState([
         { name: 'All', isSelected: true },
-        { name: 'UI', isSelected: false },
-        { name: 'UX', isSelected: false },
-        { name: 'Enhancement', isSelected: false },
-        { name: 'Bug', isSelected: false },
-        { name: 'Feature', isSelected: false }
+        { name: 'Environment', isSelected: false },
+        { name: 'Work-Life Balance', isSelected: false },
+        { name: 'Recognition and Rewards', isSelected: false },
+        { name: 'Training and Development', isSelected: false },
+        { name: 'Communication', isSelected: false },
+        { name: 'Others', isSelected: false }
     ]);
 
     function changeActiveTag(clickedTagIndex) {

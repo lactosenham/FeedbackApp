@@ -15,11 +15,11 @@ function AppInfo({ isMobileScreen, showHideSideMenu }) {
             <div className="app-info__content container">
                 <div className="app-info__container">
                     <h1 className="app-info__title">
-                        Frontend Mentor
+                        Datum Consulting
                     </h1>
                     
                     <p className="app-info__sub-heading">
-                        Feedback Board
+                        Feedback Dashboard
                     </p>
                 </div>
 
