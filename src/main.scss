@@ -1,0 +1,1577 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap');
+
+$primary-font: 'Jost', sans-serif;
+
+$border-radius: 10px;
+$input-border-radius: 5px;
+
+$aside-card-padding: 1.5em;
+$aside-max-width: 255px;
+
+$page-padding: 2em 0 6em;
+$container-width: 87%;
+
+$tag-padding-mobile: .35em 1.15em;
+
+$tablet-padding: 3.5em 0 6em;
+$tablet-width: 93%;
+
+$desktop-padding: 5.875em 0 8em;
+$desktop-max-width: 1110px;
+
+// * Not using 'getColor()' here because Sass functions are not hoisted
+$input-error-outline: 1px solid hsl(0, 67%, 53%);
+
+// #region FeedbackDetailPage variables
+$feedback-detail-padding: 1.5em;
+$feedback-detail-padding-lg: 2em;
+
+$heading-mobile: 1.05rem;
+$heading-mobile-lg: 1.3rem;
+
+$feedback-detail-heading-desktop: 1.1rem;
+$feedback-detail-heading-lg-desktop: 1.3rem;
+
+/*
+    * I'm using this grid-template-column sizing and gap twice - once 
+    * for the feedback item card and again the comments to ensure
+    * the leftmost part of the feedback item's message aligns with 
+    * the leftmost part of the subsequent comment's message
+*/
+$feedback-detail-column-sizing: minmax(40px, 40px) 12fr 1fr;
+$feedback-detail-column-gap: 0 2em;
+
+$feedback-detail-margin-bottom: 1.5em;
+
+// #endregion
+
+
+$font-weights: (
+    'light': 300,
+    'regular': 400,
+    'medium': 500,
+    'semi-bold': 600,
+    'bold': 700
+);
+
+$colors: (
+    'purple': hsl(283, 83, 52), // #AD1FEA
+    'blue': hsl(230, 76, 59), // #4661E6
+    'orange': hsl(14, 83, 74), // #F49F85
+    'dark-orange': hsl(0, 67%, 53%), // #D73737
+    'dark-grey': hsl(231, 100, 97), // #F2F4FE
+    'purple-black': hsl(231, 33, 34), // #3A4374
+    
+    'purple--hover': hsl(282, 90%, 66%), // #C75AF6
+    'blue--hover-link': hsl(230, 89%, 74%), // #8397F8
+    'blue--hover-button': hsl(230, 91%, 73%), // #7C91F9
+    'dark-orange--hover': hsl(0, 69%, 72%), // #E98888
+    'dark-grey--hover': hsl(230, 100%, 91%), // #CFD7FF
+    'purple-black--hover': hsl(231, 25%, 52%), // #656EA3
+    
+    'dark-purple-black': hsl(230, 31, 31), // #373F68
+    'white': hsl(0, 0, 100), // #FFFFFF
+    'light-grey': hsl(230, 60, 98), // #F7F8FD
+    'grey-purple': hsl(224, 20, 49), // #647196
+    'light-blue': hsl(204, 94, 68), // #62BCFA
+    'border-bottom-color': hsl(230, 47%, 87%) //#d0d5ee
+);
+
+@function getColor($color) {
+    @return map-get($map: $colors, $key: $color);
+}
+
+@function getFontWeight($weight) {
+    @return map-get($map: $font-weights, $key: $weight);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+.screen-reader-only {
+    position: absolute;
+    left: -100000px;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+}
+
+body { 
+    font-family: $primary-font; 
+    font-size: 1rem;
+    background-color: getColor('light-grey');
+}
+
+ul { list-style: none; }
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+a { 
+    text-decoration: none;
+    cursor: pointer;
+}
+
+@mixin flex-row-space-between {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+@mixin flex-row-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@mixin feedback-item-600px-up {
+    /*
+        * These styles apply to a feedback item whose ancestor has an element
+        * with a .parent__main e.g. suggestions__main or feedback-detail__main.
+        ! These styles should only applied in the 600px up breakpoint.
+    */
+    &__main .feedback-item { padding: $feedback-detail-padding-lg; }
+
+    &__main .feedback-content {
+        grid-template-areas: 
+            'feedback-item-upvotes feedback-item-text feedback-item-comments'
+            'feedback-item-upvotes  feedback-item-text feedback-item-comments'
+            '. feedback-item-tag-container feedback-item-comments'
+        ;
+
+        grid-template-columns: $feedback-detail-column-sizing;
+
+        gap: $feedback-detail-column-gap;
+
+        &__title {
+            font-size: $feedback-detail-heading-desktop;
+            margin-bottom: .25em;
+        }
+
+        &__upvotes {
+            align-self: flex-start;
+
+            &-button { 
+                flex-direction: column;
+                
+                max-width: 40px;
+                max-height: 53px;
+            }
+        }
+
+        &__comments { 
+            gap: .65em; 
+            justify-content: flex-end;
+        }
+
+        &__tag-container { margin-bottom: 0; }
+    }
+}
+
+@mixin aside-sidemenu-tags-styling {
+    .tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .5em;
+
+        padding: $aside-card-padding;
+
+        &__tag {
+            font-size: .9rem;
+            font-weight: getFontWeight('semi-bold');
+            
+
+            background-color: getColor('dark-grey');
+            border-radius: $border-radius;
+
+            &:hover, &:focus { background-color: getColor('dark-grey--hover'); }
+
+            
+            &-button { 
+                color: getColor('blue'); 
+                padding: .435em 1.175em;
+            }
+
+            &.tag--active {
+                background-color: getColor('blue');
+
+                & > .tags__tag-button { color: getColor('white'); }
+            }
+        }
+    }
+}
+
+@mixin aside-sidemenu-roadmap-info-styling {
+    .roadmap-info { 
+        display: flex;
+        flex-direction: column;
+
+        padding: $aside-card-padding; 
+
+        &__header { 
+            @include flex-row-space-between; 
+
+            margin-bottom: 1.15em;
+        }
+
+        &__link { 
+            font-size: .95rem; 
+            color: getColor('blue');
+            text-decoration: underline;
+
+            &:hover, &:focus { color: getColor('blue--hover-link'); }
+        }
+
+        &__category { 
+            @include flex-row-space-between; 
+
+            color: getColor('grey-purple');
+
+            &:not(:last-child) { margin-bottom: .75em; }
+
+            &-quantity { font-weight: getFontWeight('bold'); }
+        }
+
+        &__categories {
+            flex: 1 auto;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        &__title { 
+            font-size: 1.1rem; 
+            color: getColor('purple-black');
+        }
+
+        &__detail {
+            &-container {
+                display: flex;
+                align-items: center;
+                gap: .5em;
+            }
+
+            &-icon {
+                height: 10px;
+                width: 10px;
+                border-radius: 50%;
+
+                &.orange { background-color: getColor('orange'); }
+
+                &.purple { background-color: getColor('purple'); }
+
+                &.light-blue { background-color: getColor('light-blue'); }
+            }
+        }
+    }
+}
+
+@mixin app-info-mobile {
+    .app-info {
+        color: getColor('white');
+    
+        background-image: url('../assets/suggestions/mobile/background-header.png');
+        background-repeat: no-repeat;
+        background-size: cover;
+    
+        padding: 1em 0;
+    
+        &__content { @include flex-row-space-between; }
+    
+        &__title { font-size: 1.1rem; }
+    
+        &__sub-heading { font-weight: getFontWeight('medium'); }
+
+        &__hamburger-button { @include flex-row-center; }
+    }
+}
+
+.button {
+    display: inline-block;
+    font-family: $primary-font;
+    font-weight: getFontWeight('bold');
+
+    border: none;
+    border-radius: $border-radius;
+
+    cursor: pointer;
+    background-color: transparent;
+
+    &--main { 
+        font-size: .75rem;
+        color: getColor('dark-grey');
+
+        padding: .9em 1.2em; 
+    }
+
+    &--add-feedback { 
+        background-color: getColor('purple'); 
+
+        &:hover, &:focus { background-color: getColor('purple--hover'); }
+    }
+    
+    &--edit-feedback { 
+        background-color: getColor('blue'); 
+
+        &:hover, &:focus { background-color: getColor('blue--hover-button'); }
+    }
+
+    &--cancel { 
+        background-color: getColor('purple-black'); 
+
+        &:hover, &:focus { background-color: getColor('purple-black--hover'); }
+    }
+
+    &--delete {
+        background-color: getColor('dark-orange');
+
+        &-hover, &-focus { background-color: getColor('dark-orange--hover'); }
+    }
+}
+
+.feedback-button-svg { margin-right: .25em; }
+
+// * This adds spaces to the sides and centrally aligns a container
+.container {
+    width: $container-width;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.go-back {
+    &-header { margin-bottom: 3.75em; }
+
+    &__primary-button {
+        display: flex;
+        align-items: center;
+        gap: 1em;
+        
+        font-size: .9rem;
+        color: getColor('grey-purple');
+
+        &-text:hover, &-text:focus { text-decoration: underline }
+    }
+
+    &-header--secondary {
+        @include flex-row-space-between;
+        margin-bottom: 2em;
+    }
+}
+
+.input {
+    font-family: $primary-font;
+    font-size: 1rem;
+    color: getColor('purple-black');
+
+    border: none;
+    border-radius: $input-border-radius;
+    width: 100%;
+
+    cursor: pointer;
+    background-color: getColor('light-grey');
+
+    padding: 1.25em 2.25em 1.25em 1em;
+
+    &:hover ,&:focus { outline: 1px solid getColor('blue'); }
+
+    &--dropdown { 
+        position: relative; 
+
+        & .dropdown-menu { min-width: 100%; }
+    }
+    
+    &__dropdown-toggle {
+        position: absolute;
+    
+        padding: .5em;
+        right: .5em;
+        top: 0;
+        bottom: 0;
+    }
+
+    &--error {
+        @extend .input;
+
+        outline: $input-error-outline;
+    }
+}
+
+.textarea {
+    @extend .input;
+
+    padding-right: 1.25em;
+    resize: vertical;
+    min-height: 120px;
+
+    &--error {
+        @extend .textarea;
+
+        outline: $input-error-outline;
+    }
+}
+
+.feedback-item { 
+    padding: $feedback-detail-padding; 
+
+    background-color: getColor('white');
+
+    border-radius: $border-radius;
+    margin-bottom: $feedback-detail-margin-bottom;
+
+    &__badge {
+        display: flex;
+        align-items: center;
+        gap: .5em;
+
+        margin-bottom: 1.1em;
+
+        &-icon {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+
+            &.feedback-item__badge-icon--purple { background-color: getColor('purple'); }
+            
+            &.feedback-item__badge-icon--orange { background-color: getColor('orange'); }
+            
+            &.feedback-item__badge-icon--light-blue { background-color: getColor('light-blue'); }
+        }
+
+        &-text { font-size: .9rem; }
+    }
+}
+
+.feedback-content {
+    display: grid;
+
+    grid-template-areas: 
+        'feedback-item-text feedback-item-text feedback-item-text'
+        'feedback-item-tag-container feedback-item-tag-container feedback-item-tag-container'
+        'feedback-item-upvotes . feedback-item-comments'
+        ;
+
+    &__text { 
+        grid-area: feedback-item-text; 
+        margin-bottom: .65em;
+    }
+
+    &__upvotes { grid-area: feedback-item-upvotes; }
+    
+    &__comments { 
+        grid-area: feedback-item-comments; 
+        justify-self: end;
+    }
+    
+    &__tag-container { grid-area: feedback-item-tag-container; }
+
+    &__title { 
+        display: inline-block;
+
+        font-size: $heading-mobile;
+        font-weight: getFontWeight('bold');
+        color: getColor('purple-black');
+
+        margin-bottom: .4em;
+    }
+
+    a.feedback-content__title:hover, 
+    a.feedback-content__title:focus {
+        color: getColor('blue');
+    }
+
+    &__message { color: getColor('grey-purple'); }
+
+    &__tag {
+        display: inline-block;
+
+        font-size: .95rem;
+        font-weight: getFontWeight('semi-bold');
+        color: getColor('blue');
+
+        border-radius: $border-radius;
+        background-color: getColor('light-grey');
+        padding: $tag-padding-mobile;
+
+        &-container { margin-bottom: .65em; }
+    }
+
+    &__upvotes {
+        justify-self: start;
+        align-self: center;
+
+        &-total {
+            font-size: .95rem;
+            font-weight: getFontWeight('bold');
+            color: getColor('purple-black');
+        }
+
+        // * Up arrow icon needs a little bump up to be centrally aligned
+        &-button { 
+            display: flex;
+            align-items: center;
+            gap: .5em;
+
+            background-color: getColor('light-grey');
+            border-radius: $border-radius;
+            padding: $tag-padding-mobile;
+
+            &:hover, &:focus-visible { background-color: getColor('dark-grey--hover'); }
+
+            &--clicked {
+                @extend .feedback-content__upvotes-button;
+                
+                color: getColor('white');
+                background-color: getColor('blue');
+
+                & .feedback-content__upvotes-total { color: getColor('white'); }
+
+                &:hover, &:focus { background-color: getColor('blue'); }
+            }
+        }
+    }
+
+    &__comments {
+        display: flex;
+        align-items: center;
+        gap: .5em;
+
+        align-self: center;
+
+        &-total {
+            font-weight: getFontWeight('semi-bold');
+            color: getColor('purple-black');
+        }
+    }
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 4.25em;
+    left: 0;
+    z-index: 1;
+
+    background-color: getColor('white');
+    border-radius: $border-radius;
+    
+    box-shadow: 0px 10px 40px -7px #373F68;    
+    min-width: 200px;
+
+    &__item:not(:last-child) {
+        border-bottom: 1px solid getColor('border-bottom-color');
+    }
+
+    &__button {
+        font-size: .9rem;
+        font-weight: getFontWeight('regular');
+        color: getColor('grey-purple');
+        
+        width: 100%;
+        padding: 1em 1.5em;
+
+        @include flex-row-space-between;
+
+        &:hover, &:focus { color: getColor('purple') }
+
+        &--active {
+            @extend .dropdown-menu__button;
+        }
+    }
+
+    &--hidden {
+        @extend .dropdown-menu;
+
+        display: none;
+    }
+}
+
+.mobile-side-menu {
+    position: absolute;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+
+    /*
+        * 81px is the height of the banner with the gradient
+        * background, so moving the menu to be directly below it
+    */ 
+    top: 81px;
+    right: 0;
+
+    z-index: 1;
+    max-width: 72%;
+    height: calc(100vh - 81px);
+    padding: 1.5em;
+
+    background-color: getColor('light-grey');
+
+    @include aside-sidemenu-tags-styling;
+
+    @include aside-sidemenu-roadmap-info-styling;
+
+    .tags, .roadmap-info { 
+        background-color: getColor('white'); 
+        border-radius: $border-radius;
+    }
+
+    .tags { gap: .875em }
+
+    &--hidden {
+        @extend .mobile-side-menu;
+
+        display: none;
+    }
+}
+
+.suggestions {
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    &--scroll-lock {
+        max-height: 100vh;
+        overflow: hidden;
+
+        @include app-info-mobile;
+    }
+    
+    @include app-info-mobile;
+
+    &__content {
+        /*
+            ? This is a flex child of .suggestions.
+            ? Adding flex property to make it occupy remaining space
+            ? below .app-info on mobile
+        */
+        flex: 1 auto;
+
+        display: flex;
+        flex-direction: column;
+
+        &--dark {
+            @extend .suggestions__content;
+            height: 100vh;
+
+            filter: brightness(70%);
+        }
+    }
+
+    &__header {
+        color: getColor('white');
+        background-color: getColor('purple-black');
+
+        &-content { 
+            @include flex-row-space-between;
+            padding: .6em 0; 
+        }
+
+        &-container { position: relative }
+
+        &-info { font-size: .8rem; }
+
+        &-filter { 
+            display: flex;
+            align-items: center;
+        }
+
+        &-sort { 
+            display: flex;
+            align-items: center;
+
+            font-weight: getFontWeight('bold'); 
+            color: getColor('white');
+
+            margin-left: .35em;
+
+            &:hover, &:focus { color: getColor('dark-grey'); }
+        }
+
+        &-button-text { margin-right: .4em; }
+    }
+
+    &__main {
+        /* 
+            ? Makes .suggestions__main fill remaining space.
+            ? This is a flex child of .suggestions__content
+        */
+        flex: 1 auto;
+
+        display: flex;
+        flex-direction: column;
+
+        background-color: getColor('light-grey');
+        padding: 2em 0;
+
+        /*
+            * Just played around with this number until I 
+            * found where the page only moves a little but the container
+            * housing the feedback items scrolls
+        */ 
+        max-height: 100vh;
+        overflow-y: auto;
+    }
+
+    &__main-content { 
+        /* 
+            ? Makes .suggestions__main-content fill remaining space.
+            ? This is a flex child of .suggestions__main
+        */
+        flex: 1 auto;
+
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__empty {
+        /* 
+            ? Makes .suggestions__empty fill remaining space.
+            ? This is a flex child of .suggestions__main-content
+        */
+        flex: 1 auto;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        text-align: center;
+        
+
+        border-radius: $border-radius;
+        background-color: getColor('white');
+
+        padding: 0 1.5em;
+
+        &-img-container { margin-bottom: 2.25em; }
+
+        &-title { 
+            font-size: 1.2rem;
+            line-height: 1.1;
+            color: getColor('purple-black');
+
+            margin-bottom: 1em; 
+        }
+
+        &-message {
+            color: getColor('grey-purple');
+            line-height: 1.38;
+
+            margin-bottom: 1.5em;
+        }
+    }
+}
+
+.add-edit-feedback {
+    min-height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    /*
+        * Initially used $page-padding, but the go-back button on the
+        * FeedbackDetailPage wasn't aligned with that of AddEditFeedbackPage
+        * that doesn't have a secondary button, so I increased the upper padding by .55em
+    */ 
+    padding: 2.6em 0 6em;
+
+    &__icon {
+        position: absolute;
+        top: -1.75em;
+        height: 56px;
+        width: 56px;
+
+        background-repeat: no-repeat;
+        background-size: contain;
+
+        &--edit {
+            @extend .add-edit-feedback__icon;
+            background-image: url('../assets/shared/icon-edit-feedback.svg');
+        }
+        
+        &--add {
+            @extend .add-edit-feedback__icon;
+            background-image: url('../assets/shared/icon-new-feedback.svg');
+        }
+    }
+
+    &__main {
+        flex: 1 auto;
+
+        background-color: getColor('white');
+        border-radius: $border-radius;
+
+        position: relative;
+        padding: 3.5em 1.5em 1.5em;
+
+        &--editing { @extend .add-edit-feedback__main }
+    }
+
+    &__title { 
+        font-size: 1.3rem; 
+        color: getColor('purple-black');
+        margin-bottom: 1.25em;
+    }
+
+    &__input-title {
+        font-size: 1rem;
+        color: getColor('purple-black');
+        margin-bottom: .2em;
+    }
+
+    &__label {
+        display: inline-block;
+
+        color: getColor('grey-purple');
+
+        margin-bottom: .95em;
+    }
+
+    &__input-info { margin-bottom: 1.5em; }
+
+    &__validation {
+        padding-top: .35em;
+
+        &-message { color: getColor('dark-orange'); }
+
+        &--hidden { display: none; }
+    }
+
+    &__buttons {
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 1em;
+
+        &--editing {
+            display: grid;
+            grid-template-rows: 1fr 1fr 1fr;
+            gap: 1em 0;
+    
+            grid-template-areas: 
+                'add-button-container'
+                'cancel-button-container'
+                'delete-button-container'
+            ;
+        }
+    }
+
+    &__button {
+        width: 100%;
+
+        padding: 1.15em 1.2em; 
+
+        &-container:first-child { grid-area: delete-button-container; }
+        
+        &-container:nth-child(2) { grid-area: cancel-button-container; }
+        
+        &-container:last-child { grid-area: add-button-container; }
+    }
+}
+
+.feedback-detail {
+    padding: $page-padding;
+
+    .textarea { margin-bottom: .5em; }
+
+    &__comments {
+        &-container {
+            background-color: getColor('white');
+    
+            border-radius: $border-radius;
+            padding: $feedback-detail-padding $feedback-detail-padding 2em $feedback-detail-padding;
+            margin-bottom: $feedback-detail-margin-bottom;
+        }
+
+        &-title {
+            font-size: $heading-mobile-lg;
+            color: getColor('purple-black');
+            margin-bottom: 1.3em;
+        }
+    }
+
+    &__comment {
+        display: grid;
+        align-items: flex-start;
+        gap: 0 .85em;
+        
+        grid-template-areas: 
+            'comment-img-container comment-header'
+            'comment-message-container comment-message-container'
+            'comment-reply-form comment-reply-form'
+            'comment-replies comment-replies'
+        ;
+        
+        grid-template-columns: 2fr 8fr;
+        
+        &:not(:last-child) {
+            border-bottom: 1px solid getColor('border-bottom-color');
+            padding-bottom: 1.5em;
+            margin-bottom: 1.5em;
+        }
+
+        &--reply {
+            @extend .feedback-detail__comment;
+            
+            border-bottom: none;
+
+            &:not(:last-child) { padding-bottom: 0; }
+        }
+        
+        .comment {
+            &__img-container { 
+                grid-area: comment-img-container; 
+                max-width: 60px;
+                max-height: 60px;
+            }
+
+            &__header { 
+                grid-area: comment-header; 
+                
+                @include flex-row-space-between;
+
+                height: 100%;
+            }
+
+            &__user {
+                &-img { border-radius: 50%; }
+
+                &-name { 
+                    font-size: .95rem; 
+                    margin-bottom: .3em;
+                    line-height: 1; 
+                }
+
+                &-handle { 
+                    font-size: .95rem;
+                    color: getColor('grey-purple'); 
+                    line-height: 1;
+                }
+            }
+
+            &__reply-button { 
+                color: getColor('blue'); 
+
+                &:hover, &:focus { text-decoration: underline; }
+            }
+
+            &__message { 
+                font-size: .95rem;
+                color: getColor('grey-purple'); 
+
+                &-container { 
+                    grid-area: comment-message-container;
+                    padding-top: 1em; 
+                }
+            }
+
+            &__replies { 
+                grid-area: comment-replies; 
+
+                padding-top: 1.5em;
+                padding-left: 1.5em;
+
+                & .feedback-detail__comment--reply { border-bottom: none; }
+            }
+
+            &__reply-form { 
+                &-container {
+                    grid-area: comment-reply-form; 
+                    padding-top: 1em;
+
+                    // TODO: Animate revealing the form for the smooth finish
+                    &--hidden { 
+                        max-height: 0; 
+                        overflow: hidden;
+                    }
+                }
+
+                &-button-container {
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-end;
+                }
+            }
+
+            &__replying-to {
+                font-weight: getFontWeight('bold');
+                color: getColor('purple');
+            }
+        }
+    }
+
+    &__add-comment {
+        background-color: getColor('white');
+        border-radius: $border-radius;
+        padding: $feedback-detail-padding;
+
+        .add-comment {
+            &__title {
+                font-size: $heading-mobile-lg;
+                color: getColor('purple-black');
+                margin-bottom: 1em;
+            }
+
+            &__button-container { 
+                @include flex-row-space-between; 
+                
+                padding-top: .25em;
+            }
+
+            &__character-limit-message { color: getColor('grey-purple'); }
+        }
+    }
+}
+
+.roadmap {
+    padding-bottom: 6em;
+
+    &__header {
+        background-color: getColor('dark-purple-black');
+
+        &-content { 
+            @include flex-row-space-between;
+
+            padding: 1.75em 0; 
+        }
+
+        &-link-container { margin-bottom: .75em; }
+
+        & .go-back__primary-button { 
+            font-size: .8rem;
+            color: getColor('white'); 
+        }
+
+        &-title { 
+            font-size: $heading-mobile;
+            line-height: 1;
+            color: getColor('white'); 
+        }
+    }
+
+    &__mobile {
+        &-navbar {
+            border-bottom: 1px solid getColor('border-bottom-color');
+            padding-right: .25em;
+            margin-bottom: 1.65em;
+        }
+        
+        &-nav-items { @include flex-row-space-between; }
+
+        &-nav-item { 
+            &:first-child { flex: 1; } 
+            
+            &:nth-child(2)  { flex: 1.25; }
+
+            /* 
+                * This one isn't 1 because it breaks the
+                * layout at exactly 320px (iPhone 5s and smaller)
+            */
+            &:last-child { flex: .8; }
+            
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            &--active {
+                @extend .roadmap__mobile-nav-item;
+
+                /* 
+                    * Box shadow doesn't increase container size,
+                    * so it's a better option than border-bottom
+                */ 
+                box-shadow: 0 -4px 0 0 getColor('purple') inset;
+
+                & .roadmap__mobile-nav-button { color: getColor('purple-black'); }
+            }
+        }
+
+        &-nav-button { 
+            display: inline-block;
+            color: #a6aac3; 
+        
+            min-height: 64px;
+        }
+    }
+
+    &__category {
+        &-header { margin-bottom: 1.6em; }
+
+        &-title { 
+            font-size: $heading-mobile-lg;
+            line-height: 1;
+            color: getColor('purple-black');
+
+            margin-bottom: .7em;
+        }
+
+        &-explanation {
+            font-size: .95rem;
+            line-height: 1;
+            color: getColor('grey-purple');
+        }
+
+        &-item {
+            padding-top: .375em;
+            border-radius: $border-radius;
+
+            &.roadmap__category-item--purple { background-color: getColor('purple'); }
+            
+            &.roadmap__category-item--orange { background-color: getColor('orange'); }
+            
+            &.roadmap__category-item--light-blue { background-color: getColor('light-blue'); }
+
+            & .feedback-item { 
+                border-radius: 0 0 $border-radius $border-radius;
+            }
+        }
+    }
+}
+
+// ? Styling for iPhone 5s and smaller
+
+@media (max-width: 330px) {
+    .suggestions {
+        .button--main { padding: .8em .95em; }
+
+        &__header-button-container .button--add-feedback { 
+            padding: .8em .6em; 
+        }
+    }
+
+    .add-edit-feedback__button { padding: 1.05em 1.2em; }
+
+    .feedback-detail__comment--reply {
+        .comment {
+            &__user-name, &__user-handle{ font-size: .85rem; }
+
+            &__reply-button { font-size: .75rem; }
+        }
+    }
+
+    .feedback-detail__add-comment {
+        .add-comment__character-limit-message {
+            font-size: .85rem;
+        }
+    }
+}
+
+// ? FeedbackDetailPage small edit
+
+@media (min-width: 425px) {
+    .feedback-detail {
+        &__comment {
+            grid-template-columns: 2fr 12fr;
+        }
+    }
+}
+
+// ? Tablets styling
+
+@media (min-width: 600px) {
+    .button--main { 
+        font-size: .8rem;
+        padding: 1em 2em; 
+    }
+
+    .feedback-button-svg { margin-right: .4em; }
+
+    // * Shared styling that will apply on other pages
+    .feedback-content {
+        &__upvotes-button { padding: .4em 1.15em;  }
+    }
+
+    .input { 
+        font-size: 1rem; 
+        padding: .85em 2.25em .85em 1.25em;
+        
+        &__dropdown-toggle { right: 1.15em; }
+    }
+
+    .textarea { 
+        font-size: 1rem;
+        margin-bottom: 0; 
+        min-height: 96px;
+    }
+
+    .dropdown-menu { 
+        min-width: 255px; 
+
+        &__button { font-size: 1rem; }
+    }
+
+    .suggestions {
+        width: $tablet-width;
+        max-width: $desktop-max-width;
+        margin: 0 auto;
+
+        padding: $tablet-padding;
+        background-color: getColor('light-grey');
+
+        &__aside {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            align-items: center;
+            gap: .5em;
+
+            margin-bottom: 2.25em;
+
+            & > * { 
+                border-radius: $border-radius;
+                height: 100%; 
+            }
+
+            .app-info {
+                background-image: url('../assets/suggestions/tablet/background-header.png');
+
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+
+                padding: $aside-card-padding 0;
+
+                &__content.container {
+                    width: 100%;
+                    padding: 0 $aside-card-padding;
+                    margin: 0;
+                }
+
+                &__title { 
+                    line-height: 1.1; 
+                    margin-bottom: .25em;
+                }
+            }
+
+            & > :not(.app-info) { background-color: getColor('white'); }
+
+            & > * {
+                height: 23vw;
+                overflow: auto;
+
+                max-width: $aside-max-width;
+                max-height: 190px;
+            }
+
+            @include aside-sidemenu-tags-styling;
+
+            @include aside-sidemenu-roadmap-info-styling;
+        }
+
+        &__header {
+            border-radius: $border-radius;
+            
+            &-content.container {
+                width: 100%;
+                margin: 0;
+
+                padding: .865em $aside-card-padding;
+            }
+
+            &-info {
+                display: flex;
+                align-items: center;
+                gap: 2em;
+            }
+
+            &-container {
+                display: flex;
+                align-items: center;
+                gap: 1em;
+            }
+
+            &-data { font-weight: getFontWeight('bold'); }
+        }
+
+        &__main {
+            padding: 1.25em 0;
+            
+            max-height: 73vh;
+
+            &-content.container {
+                width: 100%;
+                margin: 0;
+            }
+        }
+
+        @include feedback-item-600px-up;
+
+        &__empty {
+            padding: 8em;
+
+            &-message { margin-bottom: 2.5em; }
+        }
+    }
+
+    .add-edit-feedback {
+        max-width: 540px;
+
+        // * $tablet-padding's top value wouldn't work here, so I added to it
+        padding: 4.25em 0 6em;
+
+        .go-back-header { margin-bottom: 4.25em; }
+
+        &__button { width: initial; }
+
+        &__buttons {
+            flex-direction: row;
+            justify-content: flex-end;
+
+            &--editing {
+                grid-template-columns: 3fr 1fr auto;
+                grid-template-rows: 1fr;
+                gap: 0 1em;
+    
+                grid-template-areas: 
+                    'delete-button-container cancel-button-container add-button-container'
+                ;
+            }
+        }
+
+        &__main { 
+            padding: 3.5em 2.5em 1.5em;
+            max-height: 765px; 
+
+            &--editing { max-height: initial; }
+        }
+    }
+
+    .feedback-detail {
+        max-width: 730px;
+
+        /*
+            * Since FeedbackItem is a shared component, some styles will only apply
+            * on certain pages.
+        */
+        @include feedback-item-600px-up;
+        padding: $tablet-padding;
+
+        .textarea { margin-bottom: 0; }
+
+        &__comments-container { 
+            padding: $feedback-detail-padding-lg $feedback-detail-padding-lg 2.5em $feedback-detail-padding-lg; 
+        }
+
+        &__comment {
+            grid-template-columns: $feedback-detail-column-sizing;
+            grid-template-rows: minmax(45px, 45px) auto auto;
+            gap: $feedback-detail-column-gap;
+            
+            grid-template-areas: 
+                'comment-img-container comment-header comment-header'
+                'comment-img-container comment-message-container comment-message-container'
+                '. comment-reply-form comment-reply-form'
+                'comment-replies comment-replies comment-replies'
+            ;
+
+            &:not(:last-child) {
+                padding-bottom: 2em;
+            }
+    
+            &--reply {
+                &:not(:last-child) { 
+                    padding-bottom: 0; 
+                    margin-bottom: 1em;
+                }
+            }
+
+            .comment {
+                &__user-img, &__img-container {
+                    max-width: 45px;
+                    max-height: 45px;
+                }
+
+                &__message {  
+                    font-size: 1rem; 
+                    
+                    &-container { padding-top: .85em; }
+                }
+
+                &__replies { 
+                    padding-top: 2em;
+                    padding-left: 2em;
+                }
+
+                &__reply-form { 
+                    &-container {
+                        .comment__reply-form {
+                            display: flex;
+                            align-items: center;
+                            gap: 1em;
+
+                            &-textarea-container {
+                                flex: 4;
+                            }
+
+                            &-button-container {
+                                flex: 0 0 auto;
+
+                                align-self: flex-start;
+                            }
+                        }
+                    }
+                }
+
+                &__reply-button { font-size: .9rem; }
+            }
+        }
+
+        &__add-comment {
+            .add-comment__button-container { 
+                padding-top: .7em;
+            }
+        }
+    }
+
+    .feedback-content {
+        &__upvotes { justify-self: initial; }
+    }
+}
+
+/*
+    ? Special breakpoint for RoadmapPage because
+    ? 600px is too small to house 3 columns
+*/
+@media (min-width: 700px) {
+    .roadmap {
+        padding: $tablet-padding;
+        
+        &__main {
+            display: flex;
+            align-items: flex-start;
+            gap: .625em;
+
+            &.container { width: $tablet-width; }
+
+            & > * { flex: 1; }
+        }
+
+        &__header {
+            width: $tablet-width;
+            border-radius: $border-radius;
+
+            margin: 0 auto;
+
+            margin-bottom: 2.15em;
+
+            &-content.container { 
+                width: 100%; 
+                padding: 1.8em $feedback-detail-padding;
+            }
+
+            &-title { font-size: 1.5rem; }
+
+            & .go-back__primary-button { 
+                font-size: .875rem;
+            }
+        }
+
+        &__category {
+            &-header {
+                min-height: 65px;
+                max-height: 65px;
+                overflow: auto;
+
+                margin-bottom: 1em;
+            }
+
+            &-title { font-size: $heading-mobile; }
+        }
+    }
+}
+
+// ? Desktop styling
+
+@media (min-width: 821px) {
+    .feedback-item {
+        &__badge { margin-bottom: .75em; }
+    }
+
+    .suggestions {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 1.25em;
+
+        padding: $desktop-padding;
+
+        &__aside {
+            flex: 2;
+
+            grid-template-columns: 1fr;
+            gap: 1.75em;
+            margin-bottom: 0;
+
+            max-width: $aside-max-width;
+
+            .app-info {
+                height: 16.35vh;
+                min-height: 137px;
+            }
+
+            & > :not(.app-info) { 
+                background-color: getColor('white'); 
+            }
+
+            .tags {
+                gap: .875em;
+
+                &-container { height: auto; }
+
+                &__tag {
+                    display: flex;
+                    align-items: center;
+                }
+            }
+        }
+
+        &__content {
+            flex: 4;
+
+            align-self: stretch;
+        }
+
+        &__main { max-height: 90vh; }
+    }
+
+    // * Adjusting padding-top of $desktop-padding to account for secondary button
+    .add-edit-feedback { padding: 6.6em 0 8em; }
+
+    .feedback-detail { padding: $desktop-padding; }
+
+    .feedback-content {
+        &__tag-text, &__upvotes-total { 
+            font-size: .9rem; 
+        }
+    }
+
+    .roadmap {
+        padding: $desktop-padding;
+        width: $tablet-width;
+        max-width: $desktop-max-width;
+        margin: 0 auto;
+
+        &__header {
+            min-width: 100%;
+
+            &-content.container {
+                margin: 0;
+                max-width: 100%;
+            }
+        }
+
+        &__main { 
+            gap: 2em; 
+
+            &.container { 
+                min-width: 100%; 
+                max-width: $desktop-max-width;
+            }
+        }
+    }
+}
