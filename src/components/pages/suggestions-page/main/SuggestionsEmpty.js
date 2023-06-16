@@ -18,7 +18,7 @@ function SuggestionsEmpty({ sharedProps }) {
             </h2>
 
             <p className="suggestions__empty-message">
-                Got a suggestion? Found a bug that needs to be squashed? We love hearing about new ideas to improve our app.
+                Got a suggestion? 
             </p>
 
             <div className="suggestions__empty-button-container">

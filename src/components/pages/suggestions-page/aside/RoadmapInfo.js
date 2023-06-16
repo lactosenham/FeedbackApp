@@ -6,7 +6,7 @@ import RoadmapInfoCategory from "./RoadmapInfoCategory";
 function RoadmapInfo({ feedbackItems }) {
     const plannedCategoryName = 'Planned';
     const inProgressCategoryName = 'In Progress';
-    const liveCategoryName = 'Live';
+    const liveCategoryName = 'Done';
 
     return ( 
         <section className="roadmap-info">

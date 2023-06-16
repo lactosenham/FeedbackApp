@@ -7,7 +7,7 @@ function RoadmapMobileNavbar({ getActiveMobileNavItem, feedbackItems }) {
   const categoryName = {
     planned: 'Planned',
     inProgress: 'In Progress',
-    live: 'Live'
+    live: 'Done'
   };
 
   function getTotalItems(categoryName) {
